@@ -1,0 +1,70 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35506.116 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "InstagramWeb\src\Application\Application.csproj", "{DC7D0699-FC0D-48F0-983F-B777AD0A4A79}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "InstagramWeb\src\Domain\Domain.csproj", "{F218BB77-06C4-49F0-ACB5-A48F4AE6CDC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "InstagramWeb\src\Infrastructure\Infrastructure.csproj", "{9D2952BF-6E66-4F97-BBE3-9B9468143132}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "InstagramWeb\src\Web\Web.csproj", "{4BCD9404-3EB3-41AD-BFA1-C5458178F4E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.FunctionalTests", "InstagramWeb\tests\Application.FunctionalTests\Application.FunctionalTests.csproj", "{113FAC18-225B-463F-A754-78970FE1587F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application.UnitTests", "InstagramWeb\tests\Application.UnitTests\Application.UnitTests.csproj", "{D10D7979-4FC7-4B9E-8C0F-10C3E7E99779}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.UnitTests", "InstagramWeb\tests\Domain.UnitTests\Domain.UnitTests.csproj", "{9E94287B-FC64-4874-BF22-BBCBA083DF8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure.IntegrationTests", "InstagramWeb\tests\Infrastructure.IntegrationTests\Infrastructure.IntegrationTests.csproj", "{20616FDD-3791-411D-BA09-BCC07AE2D96C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.AcceptanceTests", "InstagramWeb\tests\Web.AcceptanceTests\Web.AcceptanceTests.csproj", "{C117567E-E0F6-423F-B822-04EB0727C310}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DC7D0699-FC0D-48F0-983F-B777AD0A4A79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC7D0699-FC0D-48F0-983F-B777AD0A4A79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC7D0699-FC0D-48F0-983F-B777AD0A4A79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC7D0699-FC0D-48F0-983F-B777AD0A4A79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F218BB77-06C4-49F0-ACB5-A48F4AE6CDC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F218BB77-06C4-49F0-ACB5-A48F4AE6CDC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F218BB77-06C4-49F0-ACB5-A48F4AE6CDC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F218BB77-06C4-49F0-ACB5-A48F4AE6CDC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D2952BF-6E66-4F97-BBE3-9B9468143132}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D2952BF-6E66-4F97-BBE3-9B9468143132}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D2952BF-6E66-4F97-BBE3-9B9468143132}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D2952BF-6E66-4F97-BBE3-9B9468143132}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BCD9404-3EB3-41AD-BFA1-C5458178F4E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BCD9404-3EB3-41AD-BFA1-C5458178F4E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BCD9404-3EB3-41AD-BFA1-C5458178F4E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BCD9404-3EB3-41AD-BFA1-C5458178F4E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{113FAC18-225B-463F-A754-78970FE1587F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{113FAC18-225B-463F-A754-78970FE1587F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{113FAC18-225B-463F-A754-78970FE1587F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{113FAC18-225B-463F-A754-78970FE1587F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D10D7979-4FC7-4B9E-8C0F-10C3E7E99779}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D10D7979-4FC7-4B9E-8C0F-10C3E7E99779}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D10D7979-4FC7-4B9E-8C0F-10C3E7E99779}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D10D7979-4FC7-4B9E-8C0F-10C3E7E99779}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E94287B-FC64-4874-BF22-BBCBA083DF8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E94287B-FC64-4874-BF22-BBCBA083DF8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E94287B-FC64-4874-BF22-BBCBA083DF8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E94287B-FC64-4874-BF22-BBCBA083DF8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20616FDD-3791-411D-BA09-BCC07AE2D96C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20616FDD-3791-411D-BA09-BCC07AE2D96C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20616FDD-3791-411D-BA09-BCC07AE2D96C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20616FDD-3791-411D-BA09-BCC07AE2D96C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C117567E-E0F6-423F-B822-04EB0727C310}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C117567E-E0F6-423F-B822-04EB0727C310}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C117567E-E0F6-423F-B822-04EB0727C310}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C117567E-E0F6-423F-B822-04EB0727C310}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
