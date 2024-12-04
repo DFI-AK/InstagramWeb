@@ -2,7 +2,7 @@
 using InstagramWeb.Application.TodoLists.Commands.CreateTodoList;
 using InstagramWeb.Domain.Entities;
 
-using static Testing;
+using static InstagramWeb.Application.FunctionalTests.Testing;
 
 namespace InstagramWeb.Application.FunctionalTests.TodoLists.Commands;
 public class CreateTodoListTests : BaseTestFixture

@@ -1,0 +1,17 @@
+<div [ngClass]="gridClass">
+    @for(user of users; track user.userId){
+    <div [class]="'card rounded-4 shadow-sm '+ columnClass">
+        <div class="card-body">
+            <div
+                class="mb-2 d-flex justify-content-center align-items-center border border-primary border-3 w-25 rounded-circle">
+                <p class="fs-2 fw-bold">{{user.fullName.charAt(0)}}</p>
+            </div>
+            <a routerLink="/user" [queryParams]="{'userId':user.userId}" class="mt-1 fs-6">{{user.fullName}}</a>
+            <p class="mt-1 fs-6">{{user.emailAddress}}</p>
+            <p class="mt-1 fs-6">{{user.contactNumber}}</p>
+            <p class="mt-1 fs-6">Joined on {{user.joinAt | date : "medium"}}</p>
+            <button type="button" class="btn btn-sm btn-primary" (click)="follow(user.userId)">Follow</button>
+        </div>
+    </div>
+    }
+</div>

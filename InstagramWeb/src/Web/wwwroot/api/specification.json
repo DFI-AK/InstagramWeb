@@ -297,6 +297,61 @@
         }
       }
     },
+    "/api/User/GetUsers": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "GetUsers",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/User/Follow": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "Follow",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FollowCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/WeatherForecasts": {
       "get": {
         "tags": [
@@ -548,6 +603,95 @@
           "title": {
             "type": "string",
             "nullable": true
+          }
+        }
+      },
+      "UserDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "joinAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "followers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FollowerDto"
+            }
+          },
+          "followings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FollowingDto"
+            }
+          },
+          "followerCount": {
+            "type": "number",
+            "format": "double"
+          },
+          "followed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "FollowerDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "followerId": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "FollowingDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "followedId": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Result": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "succeeded": {
+            "type": "boolean"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "FollowCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "followedId": {
+            "type": "string"
           }
         }
       },

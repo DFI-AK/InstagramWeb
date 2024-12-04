@@ -1,9 +1,8 @@
 ﻿using InstagramWeb.Application.Common.Interfaces;
-using MediatR.Pipeline;
 using Microsoft.Extensions.Logging;
 
 namespace InstagramWeb.Application.Common.Behaviours;
-public class LoggingBehaviour<TRequest> : IRequestPreProcessor<TRequest> where TRequest : notnull
+public class LoggingBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull where TResponse : class
 {
     private readonly ILogger _logger;
     private readonly IUser _user;
@@ -16,11 +15,13 @@ public class LoggingBehaviour<TRequest> : IRequestPreProcessor<TRequest> where T
         _identityService = identityService;
     }
 
-    public async Task Process(TRequest request, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var requestName = typeof(TRequest).Name;
         var userId = _user.Id ?? string.Empty;
         string? userName = string.Empty;
+
+        TResponse response = await next();
 
         if (!string.IsNullOrEmpty(userId))
         {
@@ -29,5 +30,7 @@ public class LoggingBehaviour<TRequest> : IRequestPreProcessor<TRequest> where T
 
         _logger.LogInformation("InstagramWeb Request: {Name} {@UserId} {@UserName} {@Request}",
             requestName, userId, userName, request);
+
+        return response;
     }
 }

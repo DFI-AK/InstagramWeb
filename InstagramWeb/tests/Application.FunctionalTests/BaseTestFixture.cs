@@ -1,6 +1,6 @@
 ﻿namespace InstagramWeb.Application.FunctionalTests;
 
-using static Testing;
+using static InstagramWeb.Application.FunctionalTests.Testing;
 
 [TestFixture]
 public abstract class BaseTestFixture

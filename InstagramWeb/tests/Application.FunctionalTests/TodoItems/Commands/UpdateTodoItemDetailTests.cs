@@ -5,7 +5,7 @@ using InstagramWeb.Application.TodoLists.Commands.CreateTodoList;
 using InstagramWeb.Domain.Entities;
 using InstagramWeb.Domain.Enums;
 
-using static Testing;
+using static InstagramWeb.Application.FunctionalTests.Testing;
 
 namespace InstagramWeb.Application.FunctionalTests.TodoItems.Commands;
 public class UpdateTodoItemDetailTests : BaseTestFixture

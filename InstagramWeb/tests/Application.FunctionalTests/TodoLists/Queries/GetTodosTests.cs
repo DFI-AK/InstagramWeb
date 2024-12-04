@@ -2,7 +2,7 @@
 using InstagramWeb.Domain.Entities;
 using InstagramWeb.Domain.ValueObjects;
 
-using static Testing;
+using static InstagramWeb.Application.FunctionalTests.Testing;
 
 namespace InstagramWeb.Application.FunctionalTests.TodoLists.Queries;
 public class GetTodosTests : BaseTestFixture

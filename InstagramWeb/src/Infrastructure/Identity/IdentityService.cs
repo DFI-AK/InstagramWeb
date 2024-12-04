@@ -2,7 +2,6 @@ using InstagramWeb.Application.Common.Interfaces;
 using InstagramWeb.Application.Common.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace InstagramWeb.Infrastructure.Identity;
 public class IdentityService : IIdentityService
@@ -76,5 +75,13 @@ public class IdentityService : IIdentityService
         var result = await _userManager.DeleteAsync(user);
 
         return result.ToApplicationResult();
+    }
+
+    public async Task<bool> AddToRoleAsync(string userId, string role)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return false;
+        var result = await _userManager.AddToRoleAsync(user, role);
+        return result.Succeeded;
     }
 }
