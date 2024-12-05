@@ -1,0 +1,20 @@
+<div class="w-100 position-relative" style="min-height: calc(100vh - 90px);">
+    <div class="h-full">
+        @if (chats().messages.length >0) {
+        <ul>
+            @for (chat of chats().messages; track $index) {
+            <li>{{chat.sender.fullName}} : {{chat.textMessage}}</li>
+            }
+        </ul>
+        }
+    </div>
+    <form [formGroup]="messageForm" class="position-absolute bottom-0 lef-0 right-0 w-100">
+        <div class="mb-3 form-floating position-relative">
+            <textarea formControlName="message" name="message" id="message" placeholder="Message here"
+                class="form-control w-100 resize-msg-box"></textarea>
+            <label for="message">Type your message here</label>
+            <button [disabled]="messageForm.invalid" type="submit"
+                class="btn btn-sm btn-success position-absolute msg-btn" (click)="sendMessage()">Send</button>
+        </div>
+    </form>
+</div>

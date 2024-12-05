@@ -19,7 +19,7 @@ public record UserDto
 
     public double FollowerCount => Followers.Count;
 
-    public bool Followed { get; init; }
+    public double FollowingCount => Followings.Count;
 
     private class Mapping : Profile
     {

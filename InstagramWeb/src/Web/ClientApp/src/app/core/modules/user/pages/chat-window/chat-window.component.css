@@ -1,0 +1,9 @@
+.resize-msg-box {
+    resize: none;
+}
+
+.msg-btn {
+    right: 16px;
+    top: 14px !important;
+    width: 6rem !important;
+}

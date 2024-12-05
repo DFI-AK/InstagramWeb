@@ -39,6 +39,10 @@ public static class DependencyInjection
         services.AddSingleton(TimeProvider.System);
         services.AddTransient<IIdentityService, IdentityService>();
 
+        services.AddCors(o => o.AddPolicy(Env.SignalR, policy => policy.WithOrigins("https://localhost:44447").AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+
+        services.AddSignalR();
+
         services.AddAuthorization(options =>
             options.AddPolicy(Policies.CanPurge, policy => policy.RequireRole(Roles.Administrator)));
 
