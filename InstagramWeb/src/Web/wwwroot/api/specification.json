@@ -320,6 +320,37 @@
         }
       }
     },
+    "/api/User/GetUserInfo/{userId}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "GetUserInfo",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/User/Follow": {
       "post": {
         "tags": [
@@ -646,8 +677,9 @@
             "type": "number",
             "format": "double"
           },
-          "followed": {
-            "type": "boolean"
+          "followingCount": {
+            "type": "number",
+            "format": "double"
           }
         }
       },

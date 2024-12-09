@@ -521,6 +521,7 @@ export class TodoListsClient implements ITodoListsClient {
 
 export interface IUserClient {
     getUsers(): Observable<UserDto[]>;
+    getUserInfo(userId: string): Observable<UserDto>;
     follow(command: FollowCommand): Observable<Result>;
 }
 
@@ -582,6 +583,57 @@ export class UserClient implements IUserClient {
             else {
                 result200 = <any>null;
             }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getUserInfo(userId: string): Observable<UserDto> {
+        let url_ = this.baseUrl + "/api/User/GetUserInfo/{userId}";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUserInfo(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<UserDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<UserDto>;
+        }));
+    }
+
+    protected processGetUserInfo(response: HttpResponseBase): Observable<UserDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = UserDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1262,7 +1314,7 @@ export class UserDto implements IUserDto {
     followers?: FollowerDto[];
     followings?: FollowingDto[];
     followerCount?: number;
-    followed?: boolean;
+    followingCount?: number;
 
     constructor(data?: IUserDto) {
         if (data) {
@@ -1291,7 +1343,7 @@ export class UserDto implements IUserDto {
                     this.followings!.push(FollowingDto.fromJS(item));
             }
             this.followerCount = _data["followerCount"];
-            this.followed = _data["followed"];
+            this.followingCount = _data["followingCount"];
         }
     }
 
@@ -1320,7 +1372,7 @@ export class UserDto implements IUserDto {
                 data["followings"].push(item.toJSON());
         }
         data["followerCount"] = this.followerCount;
-        data["followed"] = this.followed;
+        data["followingCount"] = this.followingCount;
         return data;
     }
 }
@@ -1334,7 +1386,7 @@ export interface IUserDto {
     followers?: FollowerDto[];
     followings?: FollowingDto[];
     followerCount?: number;
-    followed?: boolean;
+    followingCount?: number;
 }
 
 export class FollowerDto implements IFollowerDto {

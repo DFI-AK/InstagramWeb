@@ -1,4 +1,7 @@
+using InstagramWeb.Application.Common.Hubs;
+using InstagramWeb.Domain.Constants;
 using InstagramWeb.Infrastructure.Data;
+using Microsoft.AspNetCore.Http.Connections;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,33 +19,43 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     await app.InitialiseDatabaseAsync();
+    app.UseSwaggerUi(settings =>
+    {
+        settings.Path = "/api";
+        settings.DocumentPath = "/api/specification.json";
+    });
+
 }
-else
+else if (app.Environment.IsProduction())
 {
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+
+    app.UseReDoc(settings =>
+    {
+        settings.Path = "/api";
+        settings.DocumentPath = "/api/specification.json";
+    });
+
 }
 
 app.UseHealthChecks("/health");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
-app.UseSwaggerUi(settings =>
-{
-    settings.Path = "/api";
-    settings.DocumentPath = "/api/specification.json";
-});
+app.UseCors(Env.SignalR);
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
+
+app.MapHub<ChatHub>("/chathub", o => o.Transports = HttpTransportType.WebSockets | HttpTransportType.LongPolling);
 
 app.MapRazorPages();
 
 app.MapFallbackToFile("index.html");
 
 app.UseExceptionHandler(options => { });
-
 
 app.MapEndpoints();
 
