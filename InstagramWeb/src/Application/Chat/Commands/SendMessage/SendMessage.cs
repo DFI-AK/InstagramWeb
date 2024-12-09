@@ -1,7 +1,6 @@
 ﻿using InstagramWeb.Application.Common.Hubs;
 using InstagramWeb.Application.Common.Interfaces;
 using InstagramWeb.Application.Common.Interfaces.Hubs;
-using InstagramWeb.Application.Common.Mappings;
 using InstagramWeb.Application.Common.Models;
 using InstagramWeb.Application.Common.Security;
 using InstagramWeb.Domain.Constants;
@@ -50,15 +49,11 @@ public class SendMessageCommandHandler(IApplicationDbContext context, IUser user
             .Include(x => x.Receiver)
             .Include(x => x.Sender)
             .OrderBy(x => x.Created)
-            .ProjectToListAsync<MessageDto>(_mapper.ConfigurationProvider);
+            .LastOrDefaultAsync(cancellationToken: cancellationToken);
 
-        var chatWindow = new ChatWindowDto
-        {
-            MessageId = _user.Id,
-            Messages = messages
-        };
+        var msg = _mapper.Map<MessageDto>(messages);
 
-        await _hubContext.Clients.User(receverId).ReceiveMessage(receverId, chatWindow);
+        await _hubContext.Clients.User(receverId).ReceiveMessage(receverId, msg);
 
         return Unit.Value;
     }

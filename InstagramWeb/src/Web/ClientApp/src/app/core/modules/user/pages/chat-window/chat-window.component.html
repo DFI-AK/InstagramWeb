@@ -1,8 +1,8 @@
 <div class="w-100 position-relative" style="min-height: calc(100vh - 90px);">
     <div class="h-full">
-        @if (chats().messages.length >0) {
+        @if (chats().length >0) {
         <ul>
-            @for (chat of chats().messages; track $index) {
+            @for (chat of chats(); track $index) {
             <li>{{chat.sender.fullName}} : {{chat.textMessage}}</li>
             }
         </ul>

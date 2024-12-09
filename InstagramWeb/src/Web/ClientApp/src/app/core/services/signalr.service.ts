@@ -1,14 +1,14 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpError, HttpTransportType, HubConnectionBuilder, HubConnectionState, LogLevel } from '@microsoft/signalr';
 import { environment } from 'src/environments/environment.prod';
-import { ChatDto } from '../models/interfaces';
+import { ChatDto, Message } from '../models/interfaces';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SignalrService {
 
-  public chats = signal<ChatDto | null>(null);
+  public chats = signal<Message[]>([]);
 
   private hubConnection = new HubConnectionBuilder()
     .configureLogging(environment.production ? LogLevel.Warning : LogLevel.Debug)
@@ -23,8 +23,8 @@ export class SignalrService {
         .then(() => {
           if (this.hubConnection.state === HubConnectionState.Connected) {
             // ===========Receive chats========
-            this.hubConnection.on('ReceiveMessage', (receiverId, message: ChatDto) => {
-              this.chats.set(message);
+            this.hubConnection.on('ReceiveMessage', (receiverId, message: Message) => {
+              this.chats.update((prev) => [...prev, message]);
             });
           }
         })
