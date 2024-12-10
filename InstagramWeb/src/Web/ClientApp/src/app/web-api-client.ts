@@ -523,6 +523,7 @@ export interface IUserClient {
     getUsers(): Observable<UserDto[]>;
     getUserInfo(userId: string): Observable<UserDto>;
     follow(command: FollowCommand): Observable<Result>;
+    unfollow(command: UnfollowCommand): Observable<Result>;
 }
 
 @Injectable({
@@ -675,6 +676,58 @@ export class UserClient implements IUserClient {
     }
 
     protected processFollow(response: HttpResponseBase): Observable<Result> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = Result.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    unfollow(command: UnfollowCommand): Observable<Result> {
+        let url_ = this.baseUrl + "/api/User/Unfollow";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(command);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUnfollow(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUnfollow(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<Result>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<Result>;
+        }));
+    }
+
+    protected processUnfollow(response: HttpResponseBase): Observable<Result> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -1575,6 +1628,42 @@ export class FollowCommand implements IFollowCommand {
 }
 
 export interface IFollowCommand {
+    followedId?: string;
+}
+
+export class UnfollowCommand implements IUnfollowCommand {
+    followedId?: string;
+
+    constructor(data?: IUnfollowCommand) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.followedId = _data["followedId"];
+        }
+    }
+
+    static fromJS(data: any): UnfollowCommand {
+        data = typeof data === 'object' ? data : {};
+        let result = new UnfollowCommand();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["followedId"] = this.followedId;
+        return data;
+    }
+}
+
+export interface IUnfollowCommand {
     followedId?: string;
 }
 

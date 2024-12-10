@@ -13,7 +13,13 @@
             <p class="mt-1 fs-6">Followings : {{user.followingCount}}</p>
             <p class="mt-1 fs-6">Joined on {{user.joinAt | date : "medium"}}</p>
             <button type="button" class="btn btn-sm btn-primary" [disabled]="user.isFollowed"
-                (click)="follow(user.userId)">Follow</button>
+                (click)="follow(user.userId)">{{user.isFollowed ? 'Followed':'Follow'}}</button>
+
+            @if (user.isFollowed) {
+            <button type="button" class="btn btn-sm btn-danger ms-2" [disabled]="!user.isFollowed"
+                (click)="unfollowUser(user.userId)">Unfollow</button>
+            }
+
             <a routerLink="/user/message" [queryParams]="{'userId':user.userId}"
                 class="btn btn-sm btn-primary ms-2">Message</a>
         </div>

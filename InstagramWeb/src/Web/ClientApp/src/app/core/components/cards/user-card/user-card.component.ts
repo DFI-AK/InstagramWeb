@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UserService } from 'src/app/core/services/user.service';
-import { FollowCommand, UserClient, UserDto } from 'src/app/web-api-client';
+import { FollowCommand, UnfollowCommand, UserClient, UserDto } from 'src/app/web-api-client';
 
 @Component({
   selector: 'app-user-card',
@@ -34,6 +34,29 @@ export class UserCardComponent {
             this.userClient.getUsers().subscribe({
               next: response => {
                 this.users.update(prev => [...response]);
+              }
+            });
+          }
+        },
+        error(err) {
+          if (err instanceof HttpErrorResponse) {
+            console.log(err.message);
+          }
+        },
+      });
+  }
+
+  public unfollowUser(followedId: string) {
+    const command = new UnfollowCommand();
+    command.followedId = followedId;
+
+    this.userClient.unfollow(command)
+      .subscribe({
+        next: response => {
+          if (response.succeeded) {
+            this.userClient.getUsers().subscribe({
+              next: user => {
+                this.users.update(prev => [...user]);
               }
             });
           }

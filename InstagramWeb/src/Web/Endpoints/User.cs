@@ -1,6 +1,7 @@
 ﻿
 using InstagramWeb.Application.Common.Models;
 using InstagramWeb.Application.User.Commands.Follow;
+using InstagramWeb.Application.User.Commands.Unfollow;
 using InstagramWeb.Application.User.Queries.GetUserInfo;
 using InstagramWeb.Application.User.Queries.GetUsers;
 using InstagramWeb.Domain.Constants;
@@ -16,6 +17,7 @@ public class User : EndpointGroupBase
             .MapGet(GetUsers, $"{nameof(GetUsers)}")
             .MapGet(GetUserInfo, $"{nameof(GetUserInfo)}/{{userId}}")
             .MapPost(Follow, $"{nameof(Follow)}")
+            .MapPost(Unfollow, $"{nameof(Unfollow)}")
             ;
     }
 
@@ -23,5 +25,8 @@ public class User : EndpointGroupBase
 
     public async Task<Result> Follow(ISender sender, FollowCommand command) => await sender.Send(command);
 
+    public async Task<Result> Unfollow(ISender sender, UnfollowCommand command) => await sender.Send(command);
+
     public async Task<UserDto> GetUserInfo(ISender sender, string userId) => await sender.Send(new GetUserInfoQuery(userId));
+
 }

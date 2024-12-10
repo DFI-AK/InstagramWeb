@@ -383,6 +383,38 @@
         }
       }
     },
+    "/api/User/Unfollow": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "Unfollow",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnfollowCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/WeatherForecasts": {
       "get": {
         "tags": [
@@ -735,6 +767,15 @@
         }
       },
       "FollowCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "followedId": {
+            "type": "string"
+          }
+        }
+      },
+      "UnfollowCommand": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
