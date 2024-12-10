@@ -1,4 +1,5 @@
 ﻿using InstagramWeb.Application.Chat.Commands.SendMessage;
+using InstagramWeb.Application.Chat.Queries.ReceveMessage;
 using InstagramWeb.Application.Common.Interfaces.Hubs;
 using InstagramWeb.Application.Common.Security;
 using InstagramWeb.Domain.Constants;
@@ -14,6 +15,11 @@ public class ChatHub(ISender sender) : Hub<IChatHub>
     {
         var request = new SendMessageCommand(receiverId, message);
         await _sender.Send(request);
+    }
 
+    public async Task InvokeReceiveMessage(string senderId)
+    {
+        var request = new ReceveMessageQuery(senderId);
+        await _sender.Send(request);
     }
 }

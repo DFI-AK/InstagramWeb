@@ -1305,7 +1305,7 @@ export interface IUpdateTodoListCommand {
     title?: string | undefined;
 }
 
-export class UserDto implements IUserDto {
+export class BaseUserDto implements IBaseUserDto {
     userId?: string | undefined;
     fullName?: string | undefined;
     emailAddress?: string | undefined;
@@ -1316,7 +1316,7 @@ export class UserDto implements IUserDto {
     followerCount?: number;
     followingCount?: number;
 
-    constructor(data?: IUserDto) {
+    constructor(data?: IBaseUserDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1347,9 +1347,9 @@ export class UserDto implements IUserDto {
         }
     }
 
-    static fromJS(data: any): UserDto {
+    static fromJS(data: any): BaseUserDto {
         data = typeof data === 'object' ? data : {};
-        let result = new UserDto();
+        let result = new BaseUserDto();
         result.init(data);
         return result;
     }
@@ -1377,7 +1377,7 @@ export class UserDto implements IUserDto {
     }
 }
 
-export interface IUserDto {
+export interface IBaseUserDto {
     userId?: string | undefined;
     fullName?: string | undefined;
     emailAddress?: string | undefined;
@@ -1387,6 +1387,39 @@ export interface IUserDto {
     followings?: FollowingDto[];
     followerCount?: number;
     followingCount?: number;
+}
+
+export class UserDto extends BaseUserDto implements IUserDto {
+    isFollowed?: boolean;
+
+    constructor(data?: IUserDto) {
+        super(data);
+    }
+
+    override init(_data?: any) {
+        super.init(_data);
+        if (_data) {
+            this.isFollowed = _data["isFollowed"];
+        }
+    }
+
+    static override fromJS(data: any): UserDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserDto();
+        result.init(data);
+        return result;
+    }
+
+    override toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isFollowed"] = this.isFollowed;
+        super.toJSON(data);
+        return data;
+    }
+}
+
+export interface IUserDto extends IBaseUserDto {
+    isFollowed?: boolean;
 }
 
 export class FollowerDto implements IFollowerDto {

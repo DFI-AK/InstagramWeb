@@ -44,16 +44,16 @@ public class SendMessageCommandHandler(IApplicationDbContext context, IUser user
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        var messages = await _context.Messages
+        var receiverMessages = await _context.Messages
             .Where(msg => (msg.SenderId == _user.Id && msg.ReceiverId == receverId) || (msg.SenderId == receverId && msg.ReceiverId == _user.Id))
             .Include(x => x.Receiver)
             .Include(x => x.Sender)
             .OrderBy(x => x.Created)
             .LastOrDefaultAsync(cancellationToken: cancellationToken);
 
-        var msg = _mapper.Map<MessageDto>(messages);
+        var recMsg = _mapper.Map<MessageDto>(receiverMessages);
 
-        await _hubContext.Clients.User(receverId).ReceiveMessage(receverId, msg);
+        await _hubContext.Clients.User(receverId).ReceiveMessage(receverId, recMsg);
 
         return Unit.Value;
     }

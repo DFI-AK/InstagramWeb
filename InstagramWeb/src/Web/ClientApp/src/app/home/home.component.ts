@@ -1,6 +1,7 @@
 import { Component, OnInit, effect, inject, signal } from '@angular/core';
 import { UserClient, UserDto } from '../web-api-client';
 import { HttpErrorResponse } from '@angular/common/http';
+import { UserService } from '../core/services/user.service';
 
 @Component({
   selector: 'app-home',
@@ -17,7 +18,7 @@ export class HomeComponent implements OnInit {
   });
 
   private userService = inject(UserClient);
-  public users = signal<Array<UserDto>>([]);
+  public users = inject(UserService).users;
 
   public getUsers() {
     this.userService.getUsers()

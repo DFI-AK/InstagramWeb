@@ -1,14 +1,17 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpError, HttpTransportType, HubConnectionBuilder, HubConnectionState, LogLevel } from '@microsoft/signalr';
 import { environment } from 'src/environments/environment.prod';
 import { ChatDto, Message } from '../models/interfaces';
+import { ActivatedRoute } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SignalrService {
 
-  public chats = signal<Message[]>([]);
+  public chats = signal<Partial<Message>[]>([]);
+
+  private readonly activatedRoute = inject(ActivatedRoute);
 
   private hubConnection = new HubConnectionBuilder()
     .configureLogging(environment.production ? LogLevel.Warning : LogLevel.Debug)
@@ -23,8 +26,22 @@ export class SignalrService {
         .then(() => {
           if (this.hubConnection.state === HubConnectionState.Connected) {
             // ===========Receive chats========
+
+            this.hubConnection.on('SendMessage', (receiverId, message: Message[]) => {
+              this.chats.update((prev) => [...prev, ...message]);
+            });
+
             this.hubConnection.on('ReceiveMessage', (receiverId, message: Message) => {
+              console.log(message);
               this.chats.update((prev) => [...prev, message]);
+            });
+
+            this.activatedRoute.queryParams.subscribe({
+              next: param => {
+                const { userId } = param;
+                this.hubConnection.invoke('InvokeReceiveMessage', userId)
+                  .catch(err => console.log(err));
+              }
             });
           }
         })

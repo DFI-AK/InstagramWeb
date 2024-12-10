@@ -638,6 +638,22 @@
         }
       },
       "UserDto": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseUserDto"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "isFollowed": {
+                "type": "boolean"
+              }
+            }
+          }
+        ]
+      },
+      "BaseUserDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
