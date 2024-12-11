@@ -22,30 +22,8 @@
 
             <a routerLink="/user/message" [queryParams]="{'userId':user.userId}"
                 class="btn btn-sm btn-primary ms-2">Message</a>
-           
+
         </div>
     </div>
     }
-    <!-- Add Post Form -->
-    <div class="card rounded-4 shadow-sm mx-4 ">
-        <div class="card-body">
-            <h5 class="card-title">Create a Post</h5>
-            
-                <div class="mb-3">
-                    <textarea
-                        #postContentInput
-                        name="postContent"
-                        class="form-control"
-                        rows="3"
-                        placeholder="What's on your mind?"
-                        required
-                    ></textarea>
-                </div>
-                <button class="btn btn-primary" (click)="createPost(postContentInput.value)">
-                    Post
-                </button>
-                
-            
-        </div>
-    </div>
 </div>
