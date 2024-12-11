@@ -602,6 +602,82 @@ export class AccountClient implements IAccountClient {
     }
 }
 
+export interface IMessageClient {
+    getMessages(userId: string): Observable<GetMessageDto[]>;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class MessageClient implements IMessageClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "";
+    }
+
+    getMessages(userId: string): Observable<GetMessageDto[]> {
+        let url_ = this.baseUrl + "/api/Message/GetMessages/{userId}";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined.");
+        url_ = url_.replace("{userId}", encodeURIComponent("" + userId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetMessages(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetMessages(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<GetMessageDto[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<GetMessageDto[]>;
+        }));
+    }
+
+    protected processGetMessages(response: HttpResponseBase): Observable<GetMessageDto[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(GetMessageDto.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
 export interface ITodoItemsClient {
     getTodoItemsWithPagination(listId: number, pageNumber: number, pageSize: number): Observable<PaginatedListOfTodoItemBriefDto>;
     createTodoItem(command: CreateTodoItemCommand): Observable<number>;
@@ -1111,6 +1187,8 @@ export interface IUserClient {
     getUserInfo(): Observable<UserProfileVm>;
     follow(command: FollowCommand): Observable<Result>;
     unfollow(command: UnfollowCommand): Observable<Result>;
+    isFollow(userId: string): Observable<boolean>;
+    getFollowers(): Observable<FollowersDtos[]>;
 }
 
 @Injectable({
@@ -1323,6 +1401,114 @@ export class UserClient implements IUserClient {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = Result.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    isFollow(userId: string): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/User/isFollow?";
+        if (userId === undefined || userId === null)
+            throw new Error("The parameter 'userId' must be defined and cannot be null.");
+        else
+            url_ += "UserId=" + encodeURIComponent("" + userId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processIsFollow(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processIsFollow(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<boolean>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<boolean>;
+        }));
+    }
+
+    protected processIsFollow(response: HttpResponseBase): Observable<boolean> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getFollowers(): Observable<FollowersDtos[]> {
+        let url_ = this.baseUrl + "/api/User/getFollowers";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetFollowers(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetFollowers(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<FollowersDtos[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<FollowersDtos[]>;
+        }));
+    }
+
+    protected processGetFollowers(response: HttpResponseBase): Observable<FollowersDtos[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(FollowersDtos.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -2080,6 +2266,64 @@ export interface IInfoRequest {
     newEmail?: string | undefined;
     newPassword?: string | undefined;
     oldPassword?: string | undefined;
+}
+
+export class GetMessageDto implements IGetMessageDto {
+    status?: MessageStatus;
+    message?: string;
+    created?: Date;
+    senderName?: string;
+    isMine?: boolean;
+
+    constructor(data?: IGetMessageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.status = _data["status"];
+            this.message = _data["message"];
+            this.created = _data["created"] ? new Date(_data["created"].toString()) : <any>undefined;
+            this.senderName = _data["senderName"];
+            this.isMine = _data["isMine"];
+        }
+    }
+
+    static fromJS(data: any): GetMessageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetMessageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["status"] = this.status;
+        data["message"] = this.message;
+        data["created"] = this.created ? this.created.toISOString() : <any>undefined;
+        data["senderName"] = this.senderName;
+        data["isMine"] = this.isMine;
+        return data;
+    }
+}
+
+export interface IGetMessageDto {
+    status?: MessageStatus;
+    message?: string;
+    created?: Date;
+    senderName?: string;
+    isMine?: boolean;
+}
+
+export enum MessageStatus {
+    Sent = 0,
+    Delivered = 1,
+    Seen = 2,
 }
 
 export class PaginatedListOfTodoItemBriefDto implements IPaginatedListOfTodoItemBriefDto {
@@ -3076,6 +3320,50 @@ export class UnfollowCommand implements IUnfollowCommand {
 
 export interface IUnfollowCommand {
     followedId?: string;
+}
+
+export class FollowersDtos implements IFollowersDtos {
+    userId?: string;
+    fullName?: string;
+    emailAddress?: string;
+
+    constructor(data?: IFollowersDtos) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"];
+            this.fullName = _data["fullName"];
+            this.emailAddress = _data["emailAddress"];
+        }
+    }
+
+    static fromJS(data: any): FollowersDtos {
+        data = typeof data === 'object' ? data : {};
+        let result = new FollowersDtos();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
+        data["fullName"] = this.fullName;
+        data["emailAddress"] = this.emailAddress;
+        return data;
+    }
+}
+
+export interface IFollowersDtos {
+    userId?: string;
+    fullName?: string;
+    emailAddress?: string;
 }
 
 export class CreatePostCommand implements ICreatePostCommand {

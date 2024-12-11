@@ -43,7 +43,7 @@ public record BaseUserDto
 
 public record UserDto : BaseUserDto
 {
-    public bool IsFollowed { get; init; }
+    public bool IsFollowed { get; set; }
     private class UserMapping : Profile
     {
         public UserMapping()

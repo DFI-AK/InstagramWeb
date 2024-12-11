@@ -13,6 +13,8 @@ public static class DependencyInjection
         services.AddDatabaseDeveloperPageExceptionFilter();
 
         services.AddScoped<IUser, CurrentUser>();
+        services.AddScoped<IMessageServices, MessageServices>();
+        services.AddScoped<IUserServices, UserServices>();
 
         services.AddHttpContextAccessor();
 

@@ -12,4 +12,5 @@ public class UserMessage : BaseEntity<string>
     public string? TextMessage { get; set; }
 
     public MessageStatus Status { get; set; }
+
 }

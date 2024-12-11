@@ -35,6 +35,7 @@ import { UserPostModule } from './core/modules/user-post/user-post.module';
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'user', loadChildren: () => import('./core/modules/user/user.module').then(m => m.UserModule) },
       { path: 'user-post', loadChildren: () => import('./core/modules/user-post/user-post.module').then(m => m.UserPostModule) },
+      
     ]),
     BrowserAnimationsModule,
     ModalModule.forRoot(),

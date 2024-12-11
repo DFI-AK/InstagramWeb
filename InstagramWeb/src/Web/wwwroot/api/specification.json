@@ -385,6 +385,40 @@
         }
       }
     },
+    "/api/Message/GetMessages/{userId}": {
+      "get": {
+        "tags": [
+          "Message"
+        ],
+        "operationId": "GetMessages",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GetMessageDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/TodoItems": {
       "get": {
         "tags": [
@@ -783,6 +817,60 @@
         }
       }
     },
+    "/api/User/isFollow": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "isFollow",
+        "parameters": [
+          {
+            "name": "UserId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/User/getFollowers": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "operationId": "getFollowers",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FollowersDtos"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/UserPost/Post": {
       "post": {
         "tags": [
@@ -1065,6 +1153,42 @@
             "nullable": true
           }
         }
+      },
+      "GetMessageDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/MessageStatus"
+          },
+          "message": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "senderName": {
+            "type": "string"
+          },
+          "isMine": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MessageStatus": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "Sent",
+          "Delivered",
+          "Seen"
+        ],
+        "enum": [
+          0,
+          1,
+          2
+        ]
       },
       "PaginatedListOfTodoItemBriefDto": {
         "type": "object",
@@ -1466,6 +1590,21 @@
         "additionalProperties": false,
         "properties": {
           "followedId": {
+            "type": "string"
+          }
+        }
+      },
+      "FollowersDtos": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "emailAddress": {
             "type": "string"
           }
         }

@@ -19,12 +19,13 @@ public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, List<UserDto>
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
     private readonly IUser _user;
-
-    public GetUsersQueryHandler(IApplicationDbContext context, IMapper mapper, IUser user)
+    private readonly IUserServices _userServices;
+    public GetUsersQueryHandler(IApplicationDbContext context, IMapper mapper, IUser user,IUserServices userServices)
     {
         _context = context;
         _mapper = mapper;
         _user = user;
+        _userServices=userServices;
     }
 
     public async Task<List<UserDto>> Handle(GetUsersQuery request, CancellationToken cancellationToken)

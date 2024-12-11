@@ -10,4 +10,6 @@ public record MessageDto
     public DateTimeOffset SentAt { get; init; }
     public UserDto Sender { get; set; } = null!;
     public UserDto Receiver { get; set; } = null!;
+
+    
 }
