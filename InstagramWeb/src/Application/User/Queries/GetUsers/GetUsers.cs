@@ -33,6 +33,7 @@ public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, List<UserDto>
             .Where(x => x.Id != _user.Id)
             .Include(x => x.Followers)
             .Include(x => x.Followed)
+            .Include(x => x.Posts)
             .OrderBy(x => x.FirstName)
             .AsNoTracking()
             .ProjectToListAsync<BaseUserDto>(_mapper.ConfigurationProvider);

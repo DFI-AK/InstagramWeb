@@ -13,7 +13,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        var connectionString = configuration.GetConnectionString(Env.DefaultConnection);
 
         Guard.Against.Null(connectionString, message: "Connection string 'DefaultConnection' not found.");
 
@@ -42,6 +42,9 @@ public static class DependencyInjection
         services.AddCors(o => o.AddPolicy(Env.SignalR, policy => policy.WithOrigins("https://localhost:44447").AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 
         services.AddSignalR();
+
+        services.AddAuthentication()
+            .AddBearerToken(IdentityConstants.BearerScheme);
 
         services.AddAuthorization(options =>
             options.AddPolicy(Policies.CanPurge, policy => policy.RequireRole(Roles.Administrator)));

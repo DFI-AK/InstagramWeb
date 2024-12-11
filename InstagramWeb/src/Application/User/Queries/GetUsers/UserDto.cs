@@ -12,6 +12,8 @@ public record BaseUserDto
     public List<FollowingDto> Followings { get; init; } = [];
     public double FollowerCount => Followers.Count;
     public double FollowingCount => Followings.Count;
+    public IReadOnlyCollection<UserPost> Posts { get; init; } = [];
+    public int PostCount => Posts.Count;
     private class BaseMapping : Profile
     {
         public BaseMapping()
@@ -24,10 +26,17 @@ public record BaseUserDto
                 .ForMember(dest => dest.JoinAt, o => o.MapFrom(src => src.Created))
                 .ForMember(dest => dest.Followers, o => o.MapFrom(src => src.Followed))
                 .ForMember(dest => dest.Followings, o => o.MapFrom(src => src.Followers))
+                .ForMember(dest => dest.Posts, o => o.MapFrom(src => src.Posts))
+                .ForMember(dest => dest.PostCount, o => o.Ignore())
                 ;
 
             CreateMap<Follows, FollowingDto>().ForMember(x => x.FollowedId, o => o.MapFrom(src => src.FollowedId));
             CreateMap<Follows, FollowerDto>().ForMember(x => x.FollowerId, o => o.MapFrom(src => src.FollowerId));
+
+            CreateMap<Post, UserPost>()
+                .ForMember(dest => dest.PostId, o => o.MapFrom(src => src.Id))
+                .ForMember(dest => dest.PostOn, o => o.MapFrom(src => src.Created))
+                .ForMember(dest => dest.Category, o => o.MapFrom(src => src.Category.ToString()));
         }
     }
 }
@@ -55,4 +64,12 @@ public record FollowerDto
 public record FollowingDto
 {
     public string? FollowedId { get; init; }
+}
+
+public record UserPost
+{
+    public string? PostId { get; init; }
+    public string? Content { get; init; }
+    public DateTimeOffset PostOn { get; init; }
+    public string? Category { get; init; }
 }

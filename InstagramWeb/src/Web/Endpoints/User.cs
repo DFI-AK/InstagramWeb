@@ -15,7 +15,7 @@ public class User : EndpointGroupBase
         app.MapGroup(this)
             .RequireAuthorization(x => x.RequireRole(Roles.User))
             .MapGet(GetUsers, $"{nameof(GetUsers)}")
-            .MapGet(GetUserInfo, $"{nameof(GetUserInfo)}/{{userId}}")
+            .MapGet(GetUserInfo, $"{nameof(GetUserInfo)}")
             .MapPost(Follow, $"{nameof(Follow)}")
             .MapPost(Unfollow, $"{nameof(Unfollow)}")
             ;
@@ -27,6 +27,6 @@ public class User : EndpointGroupBase
 
     public async Task<Result> Unfollow(ISender sender, UnfollowCommand command) => await sender.Send(command);
 
-    public async Task<UserDto> GetUserInfo(ISender sender, string userId) => await sender.Send(new GetUserInfoQuery(userId));
+    public async Task<UserProfileVm> GetUserInfo(ISender sender) => await sender.Send(new GetUserInfoQuery());
 
 }
