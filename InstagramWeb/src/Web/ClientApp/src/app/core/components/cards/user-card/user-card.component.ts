@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, Input } from '@angular/core';
+import { Component, ElementRef, inject, Input, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UserService } from 'src/app/core/services/user.service';
-import { FollowCommand, UnfollowCommand, UserClient, UserDto } from 'src/app/web-api-client';
+import { CreatePostCommand, FollowCommand, UnfollowCommand, UserClient, UserDto, UserPostClient } from 'src/app/web-api-client';
 
 @Component({
   selector: 'app-user-card',
@@ -13,6 +13,7 @@ import { FollowCommand, UnfollowCommand, UserClient, UserDto } from 'src/app/web
   styleUrl: './user-card.component.css'
 })
 export class UserCardComponent {
+  @ViewChild('postContentInput') postContentInput!: ElementRef<HTMLTextAreaElement>;
 
   @Input()
   public gridClass: string = '';
@@ -21,6 +22,10 @@ export class UserCardComponent {
   public columnClass: string = '';
 
   private userClient = inject(UserClient);
+  
+
+  private userService = inject(UserClient);
+  private postService = inject(UserPostClient);
 
   public readonly users = inject(UserService).users;
 
@@ -68,4 +73,26 @@ export class UserCardComponent {
         },
       });
   }
+
+  public createPost(content: string) {
+    const command = new CreatePostCommand()
+    command.content = content
+    command.imageUrls = []
+
+     if (content.trim() === '') {
+        alert('Post content cannot be empty.');
+        return;
+    } 
+    this.postService.post(command)
+      .subscribe({
+        next: response => {
+          console.log('Post created successfully:', response);
+           // Clear the textarea after success
+        this.postContentInput.nativeElement.value = '';
+        },
+        error: (err) => {
+          console.error('Error creating post:', err);
+        },
+      })
+}
 }

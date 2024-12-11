@@ -16,6 +16,7 @@ import { AuthorizeInterceptor } from 'src/api-authorization/authorize.intercepto
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserModule } from './core/modules/user/user.module';
 import { UserCardComponent } from "./core/components/cards/user-card/user-card.component";
+import { UserPostModule } from './core/modules/user-post/user-post.module';
 
 @NgModule({
   declarations: [
@@ -33,13 +34,15 @@ import { UserCardComponent } from "./core/components/cards/user-card/user-card.c
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'user', loadChildren: () => import('./core/modules/user/user.module').then(m => m.UserModule) },
+      { path: 'user-post', loadChildren: () => import('./core/modules/user-post/user-post.module').then(m => m.UserPostModule) },
     ]),
     BrowserAnimationsModule,
     ModalModule.forRoot(),
     UserModule,
     UserCardComponent,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    UserPostModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }

@@ -9,4 +9,6 @@ public class UserProfile : BaseEntity<string>
     public ICollection<Follows> Followed { get; set; } = [];
     public ICollection<UserMessage> SenderMessages { get; set; } = [];
     public ICollection<UserMessage> ReceiverMessage { get; set; } = [];
+    public ICollection<Post> Posts { get; set; } = [];
+    public ICollection<Likes> Likes { get; set; } = [];
 }

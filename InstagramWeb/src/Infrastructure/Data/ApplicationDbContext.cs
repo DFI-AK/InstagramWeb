@@ -20,6 +20,12 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 
     public DbSet<Follows> Follows => Set<Follows>();
 
+    public DbSet<Post> Posts =>  Set<Post>();
+
+    public DbSet<PostImages> PostImages =>  Set<PostImages>();
+
+    public DbSet<Likes> Likes =>  Set<Likes>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
