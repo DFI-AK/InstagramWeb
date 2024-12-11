@@ -22,17 +22,21 @@ public class GetUserInfoQueryHandler(IApplicationDbContext context, IMapper mapp
 
     public async Task<UserProfileVm> Handle(GetUserInfoQuery request, CancellationToken cancellationToken)
     {
-        var user = await _context.UserProfiles.FirstOrDefaultAsync(x => x.Id == _user.Id, cancellationToken: cancellationToken);
+        var baseUser = await _context.UserProfiles
+            .Include(x => x.Followed)
+            .Include(x => x.Followers)
+            .Include(x => x.Posts)
+            .FirstOrDefaultAsync(x => x.Id == _user.Id, cancellationToken: cancellationToken);
 
-        var userDto = _mapper.Map<UserDto>(user);
+        var mapBaseUser = _mapper.Map<BaseUserDto>(baseUser);
 
         return new()
         {
-            PostCategories = Enum.GetValues<PostCatergory>()
-            .Cast<PostCatergory>()
+            PostCategories = Enum.GetValues<PostCategory>()
+            .Cast<PostCategory>()
             .Select(rec => new PostCategoryDto { Id = (int)rec, Title = rec.ToString() })
             .ToList(),
-            UserProfile = userDto
+            UserProfile = mapBaseUser
         };
     }
 }

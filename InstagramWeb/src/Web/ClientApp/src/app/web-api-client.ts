@@ -3116,7 +3116,7 @@ export interface IUserPost {
 
 export class UserProfileVm implements IUserProfileVm {
     postCategories?: PostCategoryDto[];
-    userProfile?: UserDto;
+    userProfile?: BaseUserDto;
 
     constructor(data?: IUserProfileVm) {
         if (data) {
@@ -3134,7 +3134,7 @@ export class UserProfileVm implements IUserProfileVm {
                 for (let item of _data["postCategories"])
                     this.postCategories!.push(PostCategoryDto.fromJS(item));
             }
-            this.userProfile = _data["userProfile"] ? UserDto.fromJS(_data["userProfile"]) : <any>undefined;
+            this.userProfile = _data["userProfile"] ? BaseUserDto.fromJS(_data["userProfile"]) : <any>undefined;
         }
     }
 
@@ -3159,7 +3159,7 @@ export class UserProfileVm implements IUserProfileVm {
 
 export interface IUserProfileVm {
     postCategories?: PostCategoryDto[];
-    userProfile?: UserDto;
+    userProfile?: BaseUserDto;
 }
 
 export class PostCategoryDto implements IPostCategoryDto {

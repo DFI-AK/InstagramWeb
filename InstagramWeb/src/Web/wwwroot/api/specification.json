@@ -1543,7 +1543,7 @@
             }
           },
           "userProfile": {
-            "$ref": "#/components/schemas/UserDto"
+            "$ref": "#/components/schemas/BaseUserDto"
           }
         }
       },

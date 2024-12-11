@@ -1,5 +1,5 @@
 ﻿namespace InstagramWeb.Domain.Enums;
-public enum PostCatergory
+public enum PostCategory
 {
     Image, Video, Text
 }

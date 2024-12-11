@@ -4,7 +4,7 @@ public class Post : BaseEntity<string>
 {
     public string? UserId { get; set; }
     public string? Content { get; set; }
-    public PostCatergory Category { get; set; }
+    public PostCategory Category { get; set; }
     public UserProfile User { get; set; } = null!;
 
     public ICollection<PostImages> Images { get; set; } = [];

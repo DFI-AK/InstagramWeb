@@ -1,6 +1,7 @@
 ﻿using InstagramWeb.Application.Common.Interfaces;
 using InstagramWeb.Application.Common.Models;
 using InstagramWeb.Domain.Entities;
+using InstagramWeb.Domain.Enums;
 
 namespace InstagramWeb.Application.UserPost.Commands.CreatePost;
 
@@ -49,6 +50,15 @@ public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, Resul
                 UserId = _user.Id,
                 Content = request.Content,
             };
+
+            if (request.ImageUrls != null && request.ImageUrls.Count > 0)
+            {
+                post.Category = PostCategory.Image;
+            }
+            else
+            {
+                post.Category = PostCategory.Text;
+            }
 
             // Add associated images
             //foreach (var imageUrl in request.ImageUrls)
