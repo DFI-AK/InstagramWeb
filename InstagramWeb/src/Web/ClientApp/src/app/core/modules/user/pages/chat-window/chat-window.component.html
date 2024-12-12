@@ -1,20 +1,45 @@
-<div class="w-100 position-relative" style="min-height: calc(100vh - 90px);">
-    <div class="h-full">
-        @if (chats().length >0) {
-        <ul>
-            @for (chat of chats(); track $index) {
-            <li>{{chat.sender.fullName}} : {{chat.textMessage}}</li>
-            }
-        </ul>
-        }
+<div class="chat-container w-100 position-relative" style="min-height: calc(100vh - 90px); background-color: #f8f9fa;">
+    <div class="chat-header p-3 text-white bg-primary">
+        <h5 class="m-0">Person Name</h5>
     </div>
-    <form [formGroup]="messageForm" class="position-absolute bottom-0 lef-0 right-0 w-100">
-        <div class="mb-3 form-floating position-relative">
-            <textarea formControlName="message" name="message" id="message" placeholder="Message here"
-                class="form-control w-100 resize-msg-box"></textarea>
-            <label for="message">Type your message here</label>
-            <button [disabled]="messageForm.invalid" type="submit"
-                class="btn btn-sm btn-success position-absolute msg-btn" (click)="sendMessage()">Send</button>
+    <div class="chat-body h-full p-3 overflow-auto" style="max-height: calc(100vh - 180px);">
+        <ul class="list-unstyled">
+            <ng-container *ngIf="chats()?.messages; else noMessages">
+                <li *ngFor="let chat of chats().messages" class="mb-2">
+                    <strong>{{ chat.sender.fullName }}</strong>: {{ chat.textMessage }}
+                </li>
+            </ng-container>
+            
+            <ng-template #noMessages>
+                <p class="text-center text-muted">No messages yet</p>
+            </ng-template>
+        </ul>
+    </div>
+    <form [formGroup]="messageForm"
+        class="chat-input position-absolute bottom-0 left-0 right-0 w-100 bg-light border-top p-3"
+        (ngSubmit)="sendMessage()" style="box-sizing: border-box;">
+        <div style="position: relative; width: 100%;">
+            <textarea formControlName="message" id="message" name="message" class="form-control"
+                placeholder="Type your message..." rows="1" style="
+        width: 100%;
+        border-radius: 20px;
+        padding: 10px 60px 10px 15px; /* Space for the button */
+        resize: none;
+        box-sizing: border-box;
+      "></textarea>
+            <button type="submit" class="btn btn-sm btn-primary" [disabled]="messageForm.invalid" style="
+        position: absolute;
+        top: 50%;
+        right: 15px; /* Adjust based on padding */
+        transform: translateY(-50%);
+        border-radius: 20px;
+        padding: 5px 15px;
+      ">
+                Send
+            </button>
         </div>
     </form>
+
+
+
 </div>

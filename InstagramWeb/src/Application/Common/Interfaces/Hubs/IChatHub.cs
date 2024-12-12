@@ -3,6 +3,6 @@
 namespace InstagramWeb.Application.Common.Interfaces.Hubs;
 public interface IChatHub
 {
-    Task ReceiveMessage(string receiverId, MessageDto message);
-    Task SendMessage(string receiverId, List<MessageDto> messages);
+    Task ReceiveMessage(string receiverId, ChatBoxVm chat);
+    Task SendMessage(string receiverId, ChatBoxVm chat);
 }

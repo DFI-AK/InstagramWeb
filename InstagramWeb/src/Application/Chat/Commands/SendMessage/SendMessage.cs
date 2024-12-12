@@ -1,8 +1,10 @@
 ﻿using InstagramWeb.Application.Common.Hubs;
 using InstagramWeb.Application.Common.Interfaces;
 using InstagramWeb.Application.Common.Interfaces.Hubs;
+using InstagramWeb.Application.Common.Mappings;
 using InstagramWeb.Application.Common.Models;
 using InstagramWeb.Application.Common.Security;
+using InstagramWeb.Application.User.Queries.GetUsers;
 using InstagramWeb.Domain.Constants;
 using InstagramWeb.Domain.Entities;
 using InstagramWeb.Domain.Enums;
@@ -50,28 +52,37 @@ public class SendMessageCommandHandler(IApplicationDbContext context, IUser user
                 .Include(x => x.Receiver)
                 .Include(x => x.Sender)
                 .OrderBy(x => x.Created)
-                .LastOrDefaultAsync(cancellationToken: cancellationToken);
+                .ProjectToListAsync<BaseMessageDto>(_mapper.ConfigurationProvider);
 
-            var baseMsg = _mapper.Map<BaseMessageDto>(receiverMessages);
+            var user = await _context.UserProfiles.FirstOrDefaultAsync(x => x.Id == receverId, cancellationToken: cancellationToken);
 
-            var recMsg = new MessageDto
+            var userDto = _mapper.Map<BaseUserDto>(user);
+
+            var msg = receiverMessages.Select(rec => new MessageDto
             {
-                IsMine = baseMsg.Sender.UserId == _user.Id,
-                Sender = baseMsg.Sender,
-                MessageId = baseMsg.MessageId,
-                MessageStatus = baseMsg.MessageStatus,
-                Receiver = baseMsg.Receiver,
-                SentAt = baseMsg.SentAt,
-                TextMessage = baseMsg.TextMessage
+                IsMine = rec.Sender.UserId == _user.Id,
+                Sender = rec.Sender,
+                MessageId = rec.MessageId,
+                MessageStatus = rec.MessageStatus,
+                Receiver = rec.Receiver,
+                SentAt = rec.SentAt,
+                TextMessage = rec.TextMessage
+            }).ToList();
+
+            var chatDto = new ChatBoxVm
+            {
+                Messages = msg,
+                User = userDto,
             };
 
-            await _hubContext.Clients.User(receverId).ReceiveMessage(receverId, recMsg);
+            await _hubContext.Clients.User(receverId).ReceiveMessage(receverId, chatDto);
+
             return Result.Success();
+
         }
-        catch (HubException ex)
+        catch (Exception ex)
         {
             return Result.Failure([ex.Message]);
         }
-
     }
 }
