@@ -2,9 +2,12 @@
     @for(user of users(); track user.userId){
     <div [class]="'card rounded-4 shadow-sm '+columnClass ">
         <div class="card-body">
-            <div
-                class="mb-2 d-flex justify-content-center align-items-center border border-primary border-3 w-25 rounded-circle">
-                <p class="fs-2 fw-bold">{{user.fullName.charAt(0)}}</p>
+            <div class="mb-2 avatar placeholder">
+                <div class="bg-neutral text-neutral-content w-24 rounded-full">
+                    <span class="font-semibold sm:text-5xl">
+                        {{user.fullName.charAt(0)}}
+                    </span>
+                </div>
             </div>
             <a routerLink="/user" [queryParams]="{'userId':user.userId}" class="mt-1 fs-6">{{user.fullName}}</a>
             <p class="mt-1 fs-6">{{user.emailAddress}}</p>
@@ -12,16 +15,17 @@
             <p class="mt-1 fs-6">Followers : {{user.followerCount}}</p>
             <p class="mt-1 fs-6">Followings : {{user.followingCount}}</p>
             <p class="mt-1 fs-6">Joined on {{user.joinAt | date : "medium"}}</p>
-            <button type="button" class="btn btn-sm btn-primary" [disabled]="user.isFollowed"
-                (click)="follow(user.userId)">{{user.isFollowed ? 'Followed':'Follow'}}</button>
 
             @if (user.isFollowed) {
-            <button type="button" class="btn btn-sm btn-danger ms-2" [disabled]="!user.isFollowed"
+            <button type="button" class="btn btn-sm btn-error" [disabled]="!user.isFollowed"
                 (click)="unfollowUser(user.userId)">Unfollow</button>
+            }@else {
+            <button type="button" class="btn btn-sm btn-primary" [disabled]="user.isFollowed"
+                (click)="follow(user.userId)">{{user.isFollowed ? 'Followed':'Follow'}}</button>
             }
 
             <a routerLink="/user/message" [queryParams]="{'userId':user.userId}"
-                class="btn btn-sm btn-primary ms-2">Message</a>
+                class="btn btn-sm btn-primary">Message</a>
 
         </div>
     </div>

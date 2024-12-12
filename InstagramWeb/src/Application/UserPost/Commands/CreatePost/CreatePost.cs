@@ -53,7 +53,7 @@ public class CreatePostCommandHandler : IRequestHandler<CreatePostCommand, Resul
 
             if (request.ImageUrls != null && request.ImageUrls.Count > 0)
             {
-                post.Category = PostCategory.Image;
+                post.Category = PostCategory.Images;
             }
             else
             {

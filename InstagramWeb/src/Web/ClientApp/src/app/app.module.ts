@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 
 import { ModalModule } from 'ngx-bootstrap/modal';
 
@@ -17,6 +17,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserModule } from './core/modules/user/user.module';
 import { UserCardComponent } from "./core/components/cards/user-card/user-card.component";
 import { UserPostModule } from './core/modules/user-post/user-post.module';
+import { refreshTokenInterceptor } from 'src/api-authorization/refresh-token.interceptor';
 
 @NgModule({
   declarations: [
@@ -29,13 +30,12 @@ import { UserPostModule } from './core/modules/user-post/user-post.module';
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
-    HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'user', loadChildren: () => import('./core/modules/user/user.module').then(m => m.UserModule) },
       { path: 'user-post', loadChildren: () => import('./core/modules/user-post/user-post.module').then(m => m.UserPostModule) },
-      
+
     ]),
     BrowserAnimationsModule,
     ModalModule.forRoot(),
@@ -46,7 +46,8 @@ import { UserPostModule } from './core/modules/user-post/user-post.module';
     UserPostModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true },
+    provideHttpClient(withFetch(), withInterceptors([refreshTokenInterceptor]))
   ],
   bootstrap: [AppComponent]
 })

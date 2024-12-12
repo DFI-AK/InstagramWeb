@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AccountClient, LoginRequest } from 'src/app/web-api-client';
+import { FormBuilder, Validators } from '@angular/forms';
+import { UserService } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -10,31 +10,27 @@ import { AccountClient, LoginRequest } from 'src/app/web-api-client';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  private accountClient = inject(AccountClient)
+  private userService = inject(UserService);
+  private readonly fb = inject(FormBuilder);
 
-  public loginForm: FormGroup;
-  submitted = false;
+  public loginForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]]
+  });
 
-  constructor(private fb: FormBuilder) {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]]
-    });
+  get email() {
+    return this.loginForm.get('email');
   }
 
+  get password() {
+    return this.loginForm.get('password');
+  }
 
-  loginUser() {
-    console.log(this.loginForm)
-    if (this.loginForm.valid) {
-      const loginRequest = new LoginRequest()
-      loginRequest.email = this.loginForm.get('email')?.value
-      loginRequest.password = this.loginForm.get('password')?.value
-      this.accountClient.postApiAccountLogin(null, null, loginRequest)
-        .subscribe({
-          next: token => {
-            console.log(token.accessToken);
-          }
-        })
+  public login() {
+    const email = this.email.value;
+    const password = this.password.value;
+    if (email && password) {
+      this.userService.login(email, password);
     }
   }
 }

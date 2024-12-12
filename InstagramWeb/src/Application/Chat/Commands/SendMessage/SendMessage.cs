@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.SignalR;
 namespace InstagramWeb.Application.Chat.Commands.SendMessage;
 
 [Authorize(Roles = Roles.User)]
-public record SendMessageCommand(string ReceiverId, string Message) : IRequest<Unit>;
+public record SendMessageCommand(string ReceiverId, string Message) : IRequest<Result>;
 
 public class SendMessageCommandValidator : AbstractValidator<SendMessageCommand>
 {
@@ -21,14 +21,14 @@ public class SendMessageCommandValidator : AbstractValidator<SendMessageCommand>
     }
 }
 
-public class SendMessageCommandHandler(IApplicationDbContext context, IUser user, IHubContext<ChatHub, IChatHub> hubContext, IMapper mapper) : IRequestHandler<SendMessageCommand, Unit>
+public class SendMessageCommandHandler(IApplicationDbContext context, IUser user, IHubContext<ChatHub, IChatHub> hubContext, IMapper mapper) : IRequestHandler<SendMessageCommand, Result>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IUser _user = user;
     private readonly IHubContext<ChatHub, IChatHub> _hubContext = hubContext;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<Unit> Handle(SendMessageCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(SendMessageCommand request, CancellationToken cancellationToken)
     {
         var (receverId, message) = request;
 
@@ -39,22 +39,39 @@ public class SendMessageCommandHandler(IApplicationDbContext context, IUser user
             TextMessage = message,
             Status = MessageStatus.Sent
         };
+        try
+        {
+            await _context.Messages.AddAsync(msgEntity, cancellationToken);
 
-        await _context.Messages.AddAsync(msgEntity, cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
 
-        await _context.SaveChangesAsync(cancellationToken);
+            var receiverMessages = await _context.Messages
+                .Where(msg => (msg.SenderId == _user.Id && msg.ReceiverId == receverId) || (msg.SenderId == receverId && msg.ReceiverId == _user.Id))
+                .Include(x => x.Receiver)
+                .Include(x => x.Sender)
+                .OrderBy(x => x.Created)
+                .LastOrDefaultAsync(cancellationToken: cancellationToken);
 
-        var receiverMessages = await _context.Messages
-            .Where(msg => (msg.SenderId == _user.Id && msg.ReceiverId == receverId) || (msg.SenderId == receverId && msg.ReceiverId == _user.Id))
-            .Include(x => x.Receiver)
-            .Include(x => x.Sender)
-            .OrderBy(x => x.Created)
-            .LastOrDefaultAsync(cancellationToken: cancellationToken);
+            var baseMsg = _mapper.Map<BaseMessageDto>(receiverMessages);
 
-        var recMsg = _mapper.Map<MessageDto>(receiverMessages);
+            var recMsg = new MessageDto
+            {
+                IsMine = baseMsg.Sender.UserId == _user.Id,
+                Sender = baseMsg.Sender,
+                MessageId = baseMsg.MessageId,
+                MessageStatus = baseMsg.MessageStatus,
+                Receiver = baseMsg.Receiver,
+                SentAt = baseMsg.SentAt,
+                TextMessage = baseMsg.TextMessage
+            };
 
-        await _hubContext.Clients.User(receverId).ReceiveMessage(receverId, recMsg);
+            await _hubContext.Clients.User(receverId).ReceiveMessage(receverId, recMsg);
+            return Result.Success();
+        }
+        catch (HubException ex)
+        {
+            return Result.Failure([ex.Message]);
+        }
 
-        return Unit.Value;
     }
 }

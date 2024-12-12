@@ -15,19 +15,12 @@ export class UserService {
   private readonly accountClient = inject(AccountClient);
   private readonly userClient = inject(UserClient);
 
-  public logout(): Observable<void> {
+  public logout(): void {
     const tokenStore = localStorage.getItem('token');
     if (!tokenStore)
       throw new Error("Token is not available");
 
-    const token = JSON.parse(tokenStore) as AccessTokenResponse;
-    return new Observable<void>()
-      .pipe(tap(() => {
-        if (token) {
-          localStorage.removeItem('token');
-          this.loggedInUser.set(null);
-        }
-      }));
+    localStorage.removeItem('token');
   }
 
   public login = (email: string, password: string) => {
@@ -38,6 +31,7 @@ export class UserService {
       .subscribe({
         next: response => {
           if (response) {
+            debugger;
             localStorage.setItem('token', JSON.stringify(response));
             this.userClient.getUserInfo()
               .subscribe({
