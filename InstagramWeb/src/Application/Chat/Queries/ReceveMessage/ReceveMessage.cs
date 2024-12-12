@@ -28,11 +28,10 @@ public class ReceveMessageQueryHandler(IApplicationDbContext context, IHubContex
     public async Task<Unit> Handle(ReceveMessageQuery request, CancellationToken cancellationToken)
     {
         var msg = await _context.Messages
-            .Where(x => (x.ReceiverId == request.ReceiverId && x.ReceiverId == _user.Id) || (x.ReceiverId == request.ReceiverId && x.ReceiverId == _user.Id))
+            .Where(x => (x.SenderId == request.ReceiverId && x.ReceiverId == _user.Id) || (x.ReceiverId == request.ReceiverId && x.SenderId == _user.Id))
             .OrderBy(x => x.Created)
             .Include(x => x.Sender)
             .Include(x => x.Receiver)
-            .Where(x => (x.ReceiverId == request.ReceiverId && x.ReceiverId == _user.Id) || (x.ReceiverId == request.ReceiverId && x.ReceiverId == _user.Id))
             .AsNoTracking()
             .ProjectToListAsync<BaseMessageDto>(_mapper.ConfigurationProvider);
 

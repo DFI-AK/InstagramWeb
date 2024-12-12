@@ -9,7 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class SignalrService {
 
-  public chats = signal<ChatDto | null>(null);
+  public chats = signal<ChatDto>({ user: null, messages: [] });
 
   private readonly activatedRoute = inject(ActivatedRoute);
 
@@ -36,13 +36,19 @@ export class SignalrService {
 
             this.hubConnection.on('SendMessage', (receiverId, chat: ChatDto) => {
               console.log(chat);
-              this.chats.update((prev) => ({ ...prev, chat }));
+              this.chats.update((prev) => ({
+                ...prev,
+                messages: [...prev.messages, ...chat.messages]  // Append new messages
+              }));
               
             });
 
             this.hubConnection.on('ReceiveMessage', (receiverId, chat: ChatDto) => {
               console.log(chat);
-              this.chats.update((prev) => ({ ...prev, chat }));
+              this.chats.update((prev) => ({
+                ...prev,
+                messages: [...prev.messages, ...chat.messages]  // Append new messages
+              }));
             });
 
             this.activatedRoute.queryParams.subscribe({
