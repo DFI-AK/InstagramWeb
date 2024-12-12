@@ -28,11 +28,11 @@ export class SignalrService {
             // ===========Receive chats========
 
             this.hubConnection.on('SendMessage', (receiverId, message: Message[]) => {
+              console.log(message);
               this.chats.update((prev) => [...prev, ...message]);
             });
 
             this.hubConnection.on('ReceiveMessage', (receiverId, message: Message) => {
-              console.log(message);
               this.chats.update((prev) => [...prev, message]);
             });
 

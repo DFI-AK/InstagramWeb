@@ -27,14 +27,25 @@ public class ReceveMessageQueryHandler(IApplicationDbContext context, IHubContex
     public async Task<Unit> Handle(ReceveMessageQuery request, CancellationToken cancellationToken)
     {
         var msg = await _context.Messages
-            .Where(x => (x.SenderId == request.SenderId && x.ReceiverId == _receiver.Id) || (x.ReceiverId == request.SenderId && x.SenderId == _receiver.Id))
             .OrderBy(x => x.Created)
             .Include(x => x.Sender)
             .Include(x => x.Receiver)
+            .Where(x => (x.SenderId == request.SenderId && x.ReceiverId == _receiver.Id) || (x.ReceiverId == request.SenderId && x.SenderId == _receiver.Id))
             .AsNoTracking()
-            .ProjectToListAsync<MessageDto>(_mapper.ConfigurationProvider);
+            .ProjectToListAsync<BaseMessageDto>(_mapper.ConfigurationProvider);
 
-        await _hubContext.Clients.User(_receiver.Id ?? string.Empty).SendMessage(_receiver.Id ?? string.Empty, msg);
+        List<MessageDto> msgDto = msg.Select(rec => new MessageDto
+        {
+            IsMine = rec.Sender.UserId == _receiver.Id,
+            Sender = rec.Sender,
+            MessageId = rec.MessageId,
+            MessageStatus = rec.MessageStatus,
+            Receiver = rec.Receiver,
+            SentAt = rec.SentAt,
+            TextMessage = rec.TextMessage
+        }).ToList();
+
+        await _hubContext.Clients.User(_receiver.Id ?? string.Empty).SendMessage(_receiver.Id ?? string.Empty, msgDto);
 
         return Unit.Value;
     }

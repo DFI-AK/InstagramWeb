@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { Observable, tap } from 'rxjs';
-import { AccessTokenResponse, AccountClient, BaseUserDto, LoginRequest, UserClient, UserDto, UserProfileVm } from 'src/app/web-api-client';
+import { AccountClient, LoginRequest, UserClient, UserDto, UserProfileVm } from 'src/app/web-api-client';
 
 @Injectable({
   providedIn: 'root'
