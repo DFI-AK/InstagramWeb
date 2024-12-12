@@ -12,6 +12,7 @@ export interface Message {
     sentAt: Date;
     sender: Receiver;
     receiver: Receiver;
+    isMine:boolean
 }
 
 export interface Receiver {

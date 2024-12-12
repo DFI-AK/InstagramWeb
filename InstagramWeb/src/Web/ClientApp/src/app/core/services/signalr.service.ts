@@ -35,20 +35,23 @@ export class SignalrService {
             })
 
             this.hubConnection.on('SendMessage', (receiverId, chat: ChatDto) => {
-              console.log(chat);
-              this.chats.update((prev) => ({
-                ...prev,
-                messages: [...prev.messages, ...chat.messages]  // Append new messages
+              const message = [...this.chats().messages, ...chat.messages]
+              const filtered = message.filter((va, idx, _self) => idx === _self.findIndex(x => x.messageId === va.messageId))
+              this.chats.update(prev => ({
+                messages: filtered,
+                user: prev.user
               }));
-              
+
             });
 
             this.hubConnection.on('ReceiveMessage', (receiverId, chat: ChatDto) => {
-              console.log(chat);
-              this.chats.update((prev) => ({
-                ...prev,
-                messages: [...prev.messages, ...chat.messages]  // Append new messages
+              const message = [...this.chats().messages, ...chat.messages]
+              const filtered = message.filter((va, idx, _self) => idx === _self.findIndex(x => x.messageId === va.messageId))
+              this.chats.update(prev => ({
+                messages: filtered,
+                user: prev.user
               }));
+
             });
 
             this.activatedRoute.queryParams.subscribe({

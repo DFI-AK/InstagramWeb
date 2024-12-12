@@ -2,7 +2,7 @@
     <div class="chat-header p-3 text-white bg-primary">
         <h5 class="m-0">Person Name</h5>
     </div>
-    <div class="chat-body h-full p-3 overflow-auto" style="max-height: calc(100vh - 180px);">
+    <!-- <div class="chat-body h-full p-3 overflow-auto" style="max-height: calc(100vh - 180px);">
         <ul class="list-unstyled">
             <ng-container *ngIf="chats()?.messages; else noMessages">
                 <li *ngFor="let chat of chats().messages" class="mb-2">
@@ -14,6 +14,15 @@
                 <p class="text-center text-muted">No messages yet</p>
             </ng-template>
         </ul>
+    </div> -->
+    <div class="chat-window">
+        @for (chat of chats().messages; track chat.messageId) {
+        <div class="chat" [ngClass]="{'chat-end':chat.isMine,'chat-start':!chat.isMine}">
+            <div class="chat-bubble">
+                {{chat.textMessage}}
+            </div>
+        </div>
+        }
     </div>
     <form [formGroup]="messageForm"
         class="chat-input position-absolute bottom-0 left-0 right-0 w-100 bg-light border-top p-3"
