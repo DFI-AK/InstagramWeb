@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { CreatePostComponent } from './pages/create-post/create-post.component';
+import { AllUsersPostComponent } from './pages/all-users-post/all-users-post.component';
 
 const routes: Routes = [
-  { path: "createPost", component: CreatePostComponent }
+   { path: "usersPost", component: AllUsersPostComponent }
 ];
 
 @NgModule({

@@ -27,14 +27,22 @@ export class SignalrService {
           if (this.hubConnection.state === HubConnectionState.Connected) {
             // ===========Receive chats========
             this.activatedRoute.queryParams.subscribe({
-              next: param => {
-                const { userId } = param
+              next: (param) => {
+                const { userId } = param;
+                console.log("User ID:", userId); // Debugging log
                 if (userId) {
-                  this.hubConnection.invoke("InvokeReceiveMessage", userId)
-                    .catch(error => console.log(error))
+                  // Clear the chats state before fetching messages for the new user
+                  this.chats.set({ user: null, messages: [] });
+            
+                  // Invoke the hub method to receive messages for the new user
+                  this.hubConnection.invoke('InvokeReceiveMessage', userId)
+                    .catch(err => console.log('Error invoking InvokeReceiveMessage:', err));
+                } else {
+                  console.log('UserId is missing from query parameters.');
                 }
               }
-            })
+            });
+            
 
             this.hubConnection.on('SendMessage', (receiverId, chat: ChatDto) => {
               const message = [...this.chats().messages, ...chat.messages]
@@ -47,21 +55,41 @@ export class SignalrService {
             });
 
             this.hubConnection.on('ReceiveMessage', (receiverId, chat: ChatDto) => {
-              console.log('chat', chat)
-              const message = [...this.chats().messages, ...chat.messages]
-              // const filtered = message.filter((va, idx, _self) => idx === _self.findIndex(x => x.messageId === va.messageId))
-              // this.chats.update(prev => ({
-              //   messages: filtered,
-              //   user: prev.user
-              // }));
-              this.chats.set(chat)
+              const filtered = chat.messages.filter((va, idx, _self) => 
+                idx === _self.findIndex(x => x.messageId === va.messageId)
+              );
+              this.chats.set({
+                messages: filtered,
+                user: chat.user
+              });
             });
+            
+
+            this.hubConnection.onreconnecting(() => {
+              console.log("Reconnecting to SignalR hub...");
+            });
+            
+            this.hubConnection.onreconnected(() => {
+              console.log("Reconnected to SignalR hub.");
+            });
+            
+
 
             this.hubConnection.on('sentMessageSuccessfully', (chats: ChatDto) => {
               console.log('chats', chats)
               this.chats.set(chats)
             })
+            this.hubConnection.onclose((error) => {
+              console.error("Connection closed with error:", error);
+            });
 
+            this.activatedRoute.queryParams.subscribe({
+              next: param => {
+                const { userId } = param;
+                this.hubConnection.invoke('InvokeReceiveMessage', userId)
+                  .catch(err => console.log(err));
+              }
+            });
           }
         })
         .catch(error => {

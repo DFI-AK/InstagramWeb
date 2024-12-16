@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SignalrService } from 'src/app/core/services/signalr.service';
 
 @Component({
@@ -13,13 +13,19 @@ import { SignalrService } from 'src/app/core/services/signalr.service';
 })
 export class ChatWindowComponent implements OnInit {
   public chats = inject(SignalrService).chats;
+  //userId: string | null = null;
+  userName: string | null = null;
+
+  constructor(private router: Router) {
+    const navigation = this.router.getCurrentNavigation();
+    this.userName = navigation?.extras.state?.['userName'] || 'Unknown User';
+  }
   
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe({
       next: param => {
         const { userId } = param;
         this.userId = userId;
-
         console.log('Chats messages:', this.chats()?.messages);
       }
     });
@@ -45,4 +51,5 @@ export class ChatWindowComponent implements OnInit {
       this.messageForm.reset();
     }
   }
+
 }

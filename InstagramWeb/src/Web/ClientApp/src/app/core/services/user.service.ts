@@ -1,18 +1,48 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
-import { AccountClient, LoginRequest, UserClient, UserDto, UserProfileVm } from 'src/app/web-api-client';
+import { effect, Inject, inject, Injectable, OnDestroy, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { AccountClient, LoginRequest, UserClient, UserDto, UserPost, UserProfileVm } from 'src/app/web-api-client';
 
 @Injectable({
   providedIn: 'root'
 })
-export class UserService {
+export class UserService implements OnDestroy {
+  ngOnDestroy(): void {
+    this.loggedInUserEffect.destroy()
+  }
+
+  constructor(@Inject('BASE_URL') baseUrl: string) {
+    this.baseUrl = baseUrl
+  }
 
   public readonly users = signal<UserDto[]>([]);
-
+  //public readonly usersPost = signal<UserPost[]>([]);
+  private baseUrl = ''
   public readonly loggedInUser = signal<UserProfileVm | null>(null);
-
+  public readonly router = inject(Router)
   private readonly accountClient = inject(AccountClient);
   private readonly userClient = inject(UserClient);
+
+  private loggedInUserEffect = effect(() => {
+    const user = this.loggedInUser()
+    const token = localStorage.getItem('token')
+    const loginUrl = this.baseUrl + 'Identity/Account/Login'
+     if (!user && !token) {
+      window.location.replace(loginUrl)
+    }
+
+    if (!user && token) {
+      this.userClient.getUserInfo()
+        .subscribe({
+          next: response => {
+            this.loggedInUser.set(response)
+          },
+          error: (err) => {
+            window.location.replace(loginUrl)
+          }
+        })
+    }
+  })
 
   public logout(): void {
     const tokenStore = localStorage.getItem('token');

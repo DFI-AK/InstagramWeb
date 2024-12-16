@@ -1,7 +1,12 @@
 <div class="grid grid-cols-5 gap-4">
-    <section class="post-section col-start-1 col-span-2">
-        Post section
-    </section>
+    <div class="post-section col-start-1 col-span-2">
+        <app-all-users-post 
+        *ngIf="usersPost.length > 0"
+        [usersPost]="usersPost" 
+        gridClass="grid grid-cols-1 w-full" 
+        columnClass="mb-3 w-full">
+      </app-all-users-post>
+    </div>
     <div class="col-start-3 col-span-2">
         <app-user-card gridClass="grid grid-cols-1 w-full"
             columnClass="mb-3 w-full"></app-user-card>

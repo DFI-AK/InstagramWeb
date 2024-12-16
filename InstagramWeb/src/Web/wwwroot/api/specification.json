@@ -871,6 +871,29 @@
         }
       }
     },
+    "/api/UserPost/GetAllUsersPosts": {
+      "get": {
+        "tags": [
+          "UserPost"
+        ],
+        "operationId": "GetAllUsersPosts",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserPost"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/UserPost/Post": {
       "post": {
         "tags": [

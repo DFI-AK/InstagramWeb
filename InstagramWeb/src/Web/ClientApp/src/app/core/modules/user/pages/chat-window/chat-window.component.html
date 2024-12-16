@@ -1,7 +1,10 @@
-<div class="chat-container w-100 position-relative" style="min-height: calc(100vh - 90px); background-color: #f8f9fa;">
+<div class="chat-container w-100 position-relative" style="min-height: calc(100vh - 90px); background-color: #f8f9fa; position: relative;">
     <div class="chat-header p-3 text-white bg-primary">
-        <h5 class="m-0">Person Name</h5>
+        <h5 class="m-0">
+            {{ userName }}
+        </h5>
     </div>
+    
     <!-- <div class="chat-body h-full p-3 overflow-auto" style="max-height: calc(100vh - 180px);">
         <ul class="list-unstyled">
             <ng-container *ngIf="chats()?.messages; else noMessages">
@@ -15,6 +18,7 @@
             </ng-template>
         </ul>
     </div> -->
+
     <div class="chat-window">
         @for (chat of chats().messages; track chat.messageId) {
         <div class="chat" [ngClass]="{'chat-end':chat.isMine,'chat-start':!chat.isMine}">
@@ -24,31 +28,27 @@
         </div>
         }
     </div>
-    <form [formGroup]="messageForm"
-        class="chat-input position-absolute bottom-0 left-0 right-0 w-100 bg-light border-top p-3"
-        (ngSubmit)="sendMessage()" style="box-sizing: border-box;">
+    
+    <form [formGroup]="messageForm" class="chat-input bg-light border-top p-3" (ngSubmit)="sendMessage()" style="position: absolute; bottom: 0; left: 0; right: 0; box-sizing: border-box;">
         <div style="position: relative; width: 100%;">
             <textarea formControlName="message" id="message" name="message" class="form-control"
                 placeholder="Type your message..." rows="1" style="
-        width: 100%;
-        border-radius: 20px;
-        padding: 10px 60px 10px 15px; /* Space for the button */
-        resize: none;
-        box-sizing: border-box;
-      "></textarea>
+                    width: 100%;
+                    border-radius: 20px;
+                    padding: 10px 60px 10px 15px; /* Space for the button */
+                    resize: none;
+                    box-sizing: border-box;
+                "></textarea>
             <button type="submit" class="btn btn-sm btn-primary" [disabled]="messageForm.invalid" style="
-        position: absolute;
-        top: 50%;
-        right: 15px; /* Adjust based on padding */
-        transform: translateY(-50%);
-        border-radius: 20px;
-        padding: 5px 15px;
-      ">
+                    position: absolute;
+                    top: 50%;
+                    right: 15px; /* Adjust based on padding */
+                    transform: translateY(-50%);
+                    border-radius: 20px;
+                    padding: 5px 15px;
+                ">
                 Send
             </button>
         </div>
     </form>
-
-
-
 </div>

@@ -24,7 +24,7 @@
                 (click)="follow(user.userId)">{{user.isFollowed ? 'Followed':'Follow'}}</button>
             }
 
-            <a routerLink="/user/message" [queryParams]="{'userId':user.userId}"
+            <a routerLink="/user/message" [queryParams]="{'userId':user.userId}" [state]="{ userName: user.fullName }"
                 class="btn btn-sm btn-primary">Message</a>
 
         </div>

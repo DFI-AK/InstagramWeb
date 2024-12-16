@@ -11,7 +11,6 @@ export const refreshTokenInterceptor: HttpInterceptorFn = (req, next) => {
   if (!storedToken) return next(req);
 
   const token = JSON.parse(storedToken) as AccessTokenResponse;
-
   const cloneReq = token
     ? req.clone({
       setHeaders: {
