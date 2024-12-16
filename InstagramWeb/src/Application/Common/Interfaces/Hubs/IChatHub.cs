@@ -5,4 +5,6 @@ public interface IChatHub
 {
     Task ReceiveMessage(string receiverId, ChatBoxVm chat);
     Task SendMessage(string receiverId, ChatBoxVm chat);
+
+    Task sentMessageSuccessfully(ChatBoxVm chts);
 }

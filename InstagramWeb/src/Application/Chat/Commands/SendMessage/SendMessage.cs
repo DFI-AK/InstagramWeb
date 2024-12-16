@@ -76,7 +76,7 @@ public class SendMessageCommandHandler(IApplicationDbContext context, IUser user
             };
 
             await _hubContext.Clients.User(receverId).ReceiveMessage(receverId, chatDto);
-
+            await _hubContext.Clients.User(_user.Id??"").sentMessageSuccessfully(chatDto);
             return Result.Success();
 
         }

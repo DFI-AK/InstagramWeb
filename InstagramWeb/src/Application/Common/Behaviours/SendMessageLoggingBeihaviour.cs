@@ -45,6 +45,8 @@ public class SendMessageLoggingBeihaviour<TRequest, TResponse>(ILogger<SendMessa
                 }
 
             }
+            return response;
+
         }
         catch (Exception ex)
         {

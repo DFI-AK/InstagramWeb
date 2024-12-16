@@ -11,7 +11,7 @@ public static class ApplicationLogExtension
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .MinimumLevel.Override("System", LogEventLevel.Warning)
             .Enrich.WithProperty("Application", "Instagram")
-            .WriteTo.Seq("http://localhost:5341")
+            .WriteTo.Console()
             .CreateLogger();
 
         services.AddLogging(o => o.AddSerilog(Log.Logger, dispose: true));

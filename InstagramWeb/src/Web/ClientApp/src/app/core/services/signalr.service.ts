@@ -29,8 +29,10 @@ export class SignalrService {
             this.activatedRoute.queryParams.subscribe({
               next: param => {
                 const { userId } = param
-                this.hubConnection.invoke("InvokeReceiveMessage", userId)
-                  .catch(error => console.log(error))
+                if (userId) {
+                  this.hubConnection.invoke("InvokeReceiveMessage", userId)
+                    .catch(error => console.log(error))
+                }
               }
             })
 
@@ -45,22 +47,21 @@ export class SignalrService {
             });
 
             this.hubConnection.on('ReceiveMessage', (receiverId, chat: ChatDto) => {
+              console.log('chat', chat)
               const message = [...this.chats().messages, ...chat.messages]
-              const filtered = message.filter((va, idx, _self) => idx === _self.findIndex(x => x.messageId === va.messageId))
-              this.chats.update(prev => ({
-                messages: filtered,
-                user: prev.user
-              }));
-
+              // const filtered = message.filter((va, idx, _self) => idx === _self.findIndex(x => x.messageId === va.messageId))
+              // this.chats.update(prev => ({
+              //   messages: filtered,
+              //   user: prev.user
+              // }));
+              this.chats.set(chat)
             });
 
-            this.activatedRoute.queryParams.subscribe({
-              next: param => {
-                const { userId } = param;
-                this.hubConnection.invoke('InvokeReceiveMessage', userId)
-                  .catch(err => console.log(err));
-              }
-            });
+            this.hubConnection.on('sentMessageSuccessfully', (chats: ChatDto) => {
+              console.log('chats', chats)
+              this.chats.set(chats)
+            })
+
           }
         })
         .catch(error => {
